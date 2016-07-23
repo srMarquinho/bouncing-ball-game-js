@@ -6,7 +6,9 @@ var ballSpeedX = 10;
 var ballSpeedY = 10;
 
 var paddle1Y = 250;
+var paddle2Y = 250;
 var paddleHeight = 100;
+var paddleThickness = 10;
 
 window.onload = function() {
   canvas = document.getElementById('gameCanvas');
@@ -42,7 +44,17 @@ function cauculateMousePos(evt) {
   };
 }
 
+function computerMovement() {
+  var paddle2YCenter = paddle2Y + (paddleHeight/2);
+  if (paddle2Y < ballY-35) {
+    paddle2Y += 6;
+  } else if (paddle2YCenter > ballY+35){
+    paddle2Y -= 6;
+  }
+}
+
 function moveEverything() {
+  computerMovement();
   ballX = ballX + ballSpeedX;
   ballY = ballY + ballSpeedY;
 
@@ -55,7 +67,12 @@ function moveEverything() {
     }
   }
   if (ballX > canvas.width) {
-    ballSpeedX = -ballSpeedX;
+    if (ballY > paddle2Y &&
+      ballY < paddle2Y + paddleHeight) {
+      ballSpeedX = -ballSpeedX;
+    } else {
+      ballReset();
+    }
   }
 
   if (ballY > canvas.height) {
@@ -70,8 +87,11 @@ function drawEverything() {
   // background
   colorRect(0, 0, canvas.width, canvas.height, 'black');
 
-  // left paddle
-  colorRect(0, paddle1Y, 10, paddleHeight, 'white');
+  // left paddle (player)
+  colorRect(0, paddle1Y, paddleThickness, paddleHeight, 'white');
+
+  // right paddle (computer)
+  colorRect(canvas.width-paddleThickness, paddle2Y, paddleThickness, paddleHeight, 'white');
 
   // ball
   colorCircle(ballX, ballY, 10, 'white');
